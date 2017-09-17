@@ -15,10 +15,13 @@ class POSFrontConfiguration(models.Model):
     api_key = fields.Text(string='API key', required=True, help='API key used to connect the mobile device')
 
     @api.model
-    def broadcast(self,data):
-        configs = self.env['posfront.configuration'].sudo().search([])
-        for config in configs:
-            print 'Sending ' + data + ' to ' + 'ebmerchant_posfront_mobile_'+config.api_key
-            self.env['bus.bus'].sendone('ebmerchant_posfront_mobile_'+config.api_key, data)
+    def send(self,config_id,data):
+        config = self.env['posfront.configuration'].sudo().search([('id','=',config_id)])
+        #print 'Sending ' + data + ' to ' + 'ebmerchant_posfront_mobile_'+config.api_key
+        self.env['bus.bus'].sendone('ebmerchant_posfront_mobile_'+config.api_key, data)
 
+
+class PosConfig(models.Model):
+    _inherit = "pos.config"
+    posfront_config_id = fields.Many2one('posfront.configuration', string='Pos front configuration', help='The configuration of POS front')
 

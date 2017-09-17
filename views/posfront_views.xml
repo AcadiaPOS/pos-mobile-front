@@ -48,6 +48,20 @@
             </field>
         </record>
 
+        <record id="view_pos_config_form" model="ir.ui.view">
+            <field name="name">pos.config.form.view</field>
+            <field name="model">pos.config</field>
+            <field name="priority" eval="8" />
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_form"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='receipt']" position="after">
+                    <group name="posfront" string="POS Front Configuration" >
+                        <field name="posfront_config_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
         <menuitem parent="point_of_sale.menu_point_config_product" action="ebmerchant_posfront.action_configuration_form" id="menu_mobilefront_config" sequence="50"/>
     </data>
 </odoo>
