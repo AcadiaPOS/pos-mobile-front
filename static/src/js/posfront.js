@@ -29,6 +29,7 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
         var pos = this.pos;
         var order = pos.get_order();
         var methods = pos.cashregisters;
+        var payment_lines = order.get_paymentlines();
         var lines = order.get_orderlines();
         var total = order.get_total_with_tax();
         var taxes = total - order.get_total_without_tax();
@@ -40,7 +41,8 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
             taxes: taxes,
             current_screen: pos.gui.get_current_screen(),
             lines: [],
-            payment_methods: []
+            payment_methods: [],
+            payment_lines: []
         };
 
         for(var i = 0;i<methods.length;i++) {
@@ -52,6 +54,18 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
                 name: name
             };
             order_info.payment_methods.push(payment_method);
+        }
+
+        for(var i = 0;i<payment_lines.length;i++) {
+            var payment_line = payment_lines[i];
+            var tmp = {
+                id: payment_line.cid,
+                name: payment_line.name,
+                amount: payment_line.amount,
+                bitpay_config_id: payment_line.cashregister.journal.bitpay_config_id,
+                mercury_config_id: payment_line.cashregister.journal.pos_mercury_config_id
+            };
+            order_info.payment_lines.push(tmp);
         }
 
         for (var i = 0;i<lines.length;i++) {
@@ -74,6 +88,21 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
     PaymentScreenWidget.include({
         show: function() {
             this._super();
+            posfront_refresh.call(this);
+        },
+
+        click_paymentmethods: function(id) {
+            this._super(id);
+            posfront_refresh.call(this);
+        },
+
+        click_delete_paymentline: function(cid) {
+            this._super(cid);
+            posfront_refresh.call(this);
+        },
+
+        payment_input: function(input) {
+            this._super(input);
             posfront_refresh.call(this);
         }
     });
