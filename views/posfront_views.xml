@@ -1,6 +1,27 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
+
+        <record id="view_pos_order" model="ir.ui.view">
+          <field name="name">POS orders</field>
+          <field name="model">pos.order</field>
+          <field name="priority" eval="8" />
+          <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+          <field name="arch" type="xml">
+            <xpath expr="//page[@name='extra']" position="inside">
+                <group string="Signature">
+                    <group>
+                        <img id="signature"/>
+                        <script language='javascript'>
+                            jQuery('#signature').attr('src','/posfront/img/'+window.location.href.match('id=(\\d+)')[1] );
+                        </script>
+                    </group>
+                </group>
+            </xpath>
+          </field>
+        </record>
+
+
         <record id="action_configuration_form" model="ir.actions.act_window">
             <field name="name">Posfront Configurations</field>
             <field name="type">ir.actions.act_window</field>

@@ -32,6 +32,7 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
         var payment_lines = order.get_paymentlines();
         var lines = order.get_orderlines();
         var total = order.get_total_with_tax();
+        var change = order.get_change();
         var taxes = total - order.get_total_without_tax();
         if(!pos.config.posfront_config_id[0]) return;
 
@@ -39,6 +40,7 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
             id: order.name,
             total: total,
             taxes: taxes,
+            change: change,
             current_screen: pos.gui.get_current_screen(),
             lines: [],
             payment_methods: [],
@@ -65,6 +67,10 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
                 bitpay_config_id: payment_line.cashregister.journal.bitpay_config_id,
                 mercury_config_id: payment_line.cashregister.journal.pos_mercury_config_id
             };
+            if(tmp.bitpay_config_id) {
+               tmp.bitpay_address = payment_line.bitpay_address;
+               tmp.btc_due = payment_line.btc_due;
+            }
             order_info.payment_lines.push(tmp);
         }
 
@@ -103,6 +109,11 @@ odoo.define('ebmerchant_posfront.posfront', function (require) {
 
         payment_input: function(input) {
             this._super(input);
+            posfront_refresh.call(this);
+        },
+
+        click_bitpay_invoice: function(cid) {
+            this._super(cid);
             posfront_refresh.call(this);
         }
     });
